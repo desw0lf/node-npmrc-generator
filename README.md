@@ -20,7 +20,8 @@ npm install node-npmrc-generator --save-dev
 | `NPMRC_NAME` | `.npmrc` | Name of the output file |
 
 ## Usage
-`BUCKET=BUCKET_NAME KEY=KEY SECRET=SECRET node-npmrc-generator`
+`ORGANISATION=sample-organisation TOKEN_LIST=username:password@packagename,username2:password2@packagename2 node-npmrc-generator`
 
 ## Change log
+- 1.0.1 - Readme updated
 - 1.0.0 - Initial release

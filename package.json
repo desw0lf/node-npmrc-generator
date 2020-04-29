@@ -1,6 +1,6 @@
 {
   "name": "node-npmrc-generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Generate npmrc for azure",
   "main": "index.js",
   "repository": {
