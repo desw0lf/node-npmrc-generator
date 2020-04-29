@@ -9,6 +9,7 @@ const { NPMRC_NAME, ORGANISATION, TOKEN_LIST } = process.env;
 const outputFile = NPMRC_NAME || ".npmrc";
 const outputPath = "./"; // maybe allow different path in future
 const distFolder = path.resolve(process.cwd() + "/", outputPath);
+const EMAIL = "npm requires email to be set but doesn't use the value"; // maybe will be required in future
 
 function writeFile(content, path, name) {
   fs.writeFile(path + "/" + name, content, function(err) {
@@ -21,16 +22,16 @@ function writeFile(content, path, name) {
 }
 
 function generateTokenString(url, name, username, password) {
-  return `${name ? name + ":" : ""}registry=${url}
+  return `${name ? name + ":" : ""}registry=https:${url}registry/
 always-auth=true
 ; Treat this auth token like a password. Do not share it with anyone, including Microsoft support.
 ; begin auth token
-//pkgs.dev.azure.com/transforming-systems/_packaging/validation/npm/registry/:username=${username}
-//pkgs.dev.azure.com/transforming-systems/_packaging/validation/npm/registry/:_password=${password}
-//pkgs.dev.azure.com/transforming-systems/_packaging/validation/npm/registry/:email=npm requires email to be set but doesn't use the value
-//pkgs.dev.azure.com/transforming-systems/_packaging/validation/npm/:username=${username}
-//pkgs.dev.azure.com/transforming-systems/_packaging/validation/npm/:_password=${password}
-//pkgs.dev.azure.com/transforming-systems/_packaging/validation/npm/:email=npm requires email to be set but doesn't use the value
+${url}registry/:username=${username}
+${url}registry/:_password=${password}
+${url}registry/:email=${EMAIL}
+${url}:username=${username}
+${url}:_password=${password}
+${url}:email=${EMAIL}
 ; end auth token
 
 `;
@@ -38,7 +39,7 @@ always-auth=true
 
 function generateURL(organisation, username) {
   // TODO regex not just for azure
-  return `https://pkgs.dev.azure.com/${organisation}/_packaging/${username}/npm/registry/`;
+  return `//pkgs.dev.azure.com/${organisation}/_packaging/${username}/npm/`;
 }
 
 function generateCredentials() {
