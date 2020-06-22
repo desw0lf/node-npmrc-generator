@@ -2,12 +2,12 @@
 const fs = require("fs");
 const path = require("path");
 
-const { NPMRC_NAME, ORGANISATION, TOKEN_LIST } = process.env;
+const { NPMRC_NAME, ORGANISATION, TOKEN_LIST, OUTPUT_PATH } = process.env;
 
 // "username:password@name,username2:password2@name2";
 
 const outputFile = NPMRC_NAME || ".npmrc";
-const outputPath = "./"; // maybe allow different path in future
+const outputPath = OUTPUT_PATH || "./"; // maybe allow different path in future
 const distFolder = path.resolve(process.cwd() + "/", outputPath);
 const EMAIL = "npm requires email to be set but doesn't use the value"; // maybe will be required in future
 
