@@ -2,12 +2,20 @@
 const fs = require("fs");
 const path = require("path");
 
-const { NPMRC_NAME, ORGANISATION, TOKEN_LIST, OUTPUT_PATH } = process.env;
 
-// "username:password@name,username2:password2@name2";
+let { ORGANISATION, TOKEN_LIST } = process.env;
+const { NPMRC_NAME, OUTPUT_PATH } = process.env;
+const { npm_package_npmrcConfig_npmrcName, npm_package_npmrcConfig_organisation, npm_package_npmrcConfig_tokenList, npm_package_npmrcConfig_outputPath } = process.env;
 
-const outputFile = NPMRC_NAME || ".npmrc";
-const outputPath = OUTPUT_PATH || "./"; // maybe allow different path in future
+if (!ORGANISATION) {
+  ORGANISATION = npm_package_npmrcConfig_organisation;
+}
+if (!TOKEN_LIST) {
+  TOKEN_LIST = npm_package_npmrcConfig_tokenList;
+}
+
+const outputFile = NPMRC_NAME || npm_package_npmrcConfig_npmrcName || ".npmrc";
+const outputPath = OUTPUT_PATH || npm_package_npmrcConfig_outputPath || "./"; 
 const distFolder = path.resolve(process.cwd() + "/", outputPath);
 const EMAIL = "npm requires email to be set but doesn't use the value"; // maybe will be required in future
 
