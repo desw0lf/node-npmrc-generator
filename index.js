@@ -36,10 +36,9 @@ function writeFile(content, path, name) {
   });
 }
 
-function generateTokenString(url, name, username, password, email) {
+function generateTokenString(url, name, username, password, email, alwaysAuth) {
   return `${name ? name + ":" : ""}registry=https:${url}registry/
-always-auth=true
-; Treat this auth token like a password. Do not share it with anyone, including Microsoft support.
+${alwaysAuth ? "always-auth=true\n" : ""}; Treat this auth token like a password. Do not share it with anyone, including Microsoft support.
 ; begin auth token
 ${url}registry/:username=${username}
 ${url}registry/:_password=${password}
@@ -52,9 +51,10 @@ ${url}:email=${email}
 `;
 }
 
-function generateURL(organisation, username) {
-  // TODO regex not just for azure
-  return `//pkgs.dev.azure.com/${organisation}/_packaging/${username}/npm/`;
+function generateURL(organisation, username, url_template) {
+  return url_template
+    .replace(/\$organisation/g, organisation)
+    .replace(/\$username/g, username);
 }
 
 function generateCredentials() {
@@ -74,9 +74,12 @@ function generateCredentials() {
         const a = l[j];
         list.push({
           username: a.username,
-          password: a.password,
+          password: a.password !== undefined ? a.password : org.password,
           name: a.name,
-          organisation: org.organisation
+          organisation: org.organisation,
+          email: a.email !== undefined ? a.email : org.email,
+          always_auth: a.always_auth !== undefined ? a.always_auth : org.always_auth,
+          url_template: a.url_template !== undefined ? a.url_template : org.url_template
         });
       }
     } catch (e) {
@@ -99,7 +102,10 @@ function init() {
   let content = "";
   for (let i = 0; i < credentials.length; i += 1) {
     const c = credentials[i];
-    content += generateTokenString(generateURL(c.organisation, c.username), c.name, c.username, c.password, ENV.email);
+    const email = c.email !== undefined ? c.email : ENV.email;
+    const always_auth = c.always_auth !== undefined ? c.always_auth : ENV.always_auth;
+    const url_template = c.url_template !== undefined ? c.url_template : ENV.url_template;
+    content += generateTokenString(generateURL(c.organisation, c.username, url_template), c.name, c.username, c.password, email, always_auth);
   }
   writeFile(content, ENV.dist_folder, ENV.npmrc_name);
 }

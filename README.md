@@ -10,18 +10,55 @@ npm install node-npmrc-generator --save-dev
 
 | Attribute | Description |
 | --- | --- |
-| `organisations` | Organisation name for the azure repository url |
-
-.e.g. `[{'organisation':'organisation-name','token_list':[{'username':'username2','password':'password2','name':'@packagename2'}]`
-| `TOKEN_LIST` | Comma separated list of tokens in `username:password@packagename` format |
+| `organisations` | Array of organisation configs (see below) |
 
 ## Optional params
 
 | Attribute | Default | Description |
 | --- | --- | --- |
 | `--npmrc_name` | `.npmrc` | Name of the output file |
-| `--output_path` | `./` | Output path, default to current directory |
-| `--config_folder_path` | `./npmrc-config.json` | Config file path, can be used instead of params |
+| `--output_path` | `./` | Output path, defaults to current directory |
+| `--config_folder_path` | `./npmrc-config.json` | Config file path |
+| `--email` | `process.env.EMAIL` | Email written into the .npmrc auth block |
+| `--always_auth` | `false` | Emit `always-auth=true` in the .npmrc |
+| `--url_template` | `//pkgs.dev.azure.com/$organisation/_packaging/$username/npm/` | Registry URL template. Use `$organisation` and `$username` as placeholders |
+
+## Precedence
+
+Each of `email`, `always_auth`, `url_template`, and `password` can be set at multiple levels. The most specific value wins:
+
+**token item** > **organisation** > **global config / CLI arg / ENV**
+
+## Example config file (npmrc-config.json)
+
+```json
+{
+  "npmrc_name": ".npmrc",
+  "email": "team@example.com",
+  "always_auth": false,
+  "url_template": "//pkgs.dev.azure.com/$organisation/_packaging/$username/npm/",
+  "organisations": [
+    {
+      "organisation": "my-org",
+      "password": "shared-token",
+      "token_list": [
+        {
+          "username": "user1",
+          "name": "@scope/package1"
+        },
+        {
+          "username": "user2",
+          "name": "@scope/package2",
+          "password": "override-token",
+          "email": "user2@example.com",
+          "always_auth": true,
+          "url_template": "//myprivate.registry.io/$organisation/$username/npm/"
+        }
+      ]
+    }
+  ]
+}
+```
 
 ## Usage (unix)
 `node-npmrc-generator --organisations=\[{\"organisation\":\"organisation-name\"\,\"token_list\":\[{\"username\":\"username2\"\,\"password\":\"password2\"\,\"name\":\"@packagename2\"}\]}\]`
@@ -31,29 +68,10 @@ npm install node-npmrc-generator --save-dev
 
 Best to use `./npmrc-config.json` file.
 
-## Example config file (npmrc-config.json):
-```
-{
-  "npmrc_name": ".npmrc",
-  "organisations": [
-    {
-      "organisation": "organisation-name",
-      "token_list": [
-        {
-          "username": "username2",
-          "password": "password2",
-          "name": "@packagename2"
-        }
-      ]
-    }
-  ]
-}
-```
-
-
 ## Change log
-- 2.0.0 - Remove `npmrcConfig`, add POSIX params and `npmrc-config.json` file for config
-- 1.0.4 - Ability to add ENV variables as `npmrcConfig` in package.json 
+- 3.0.0 - Add `email`, `always_auth`, `url_template` and org-level `password`; all settable globally, per-org, or per token item
+- 2.0.1 - Remove `npmrcConfig`, add POSIX params and `npmrc-config.json` file for config
+- 1.0.4 - Ability to add ENV variables as `npmrcConfig` in package.json
 - 1.0.3 - Added OUTPUT_PATH as new param
 - 1.0.2 - Fix urls
 - 1.0.1 - Readme updated

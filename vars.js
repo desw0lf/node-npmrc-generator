@@ -37,7 +37,9 @@ const DEFAULTS = {
   output_path: DEFAULT_OUTPUT_FOLDER_PATH,
   config_folder_path: DEFAULT_CONFIG_FOLDER_PATH,
   dist_folder: distFolderResolved,
-  email: "npm requires email to be set but doesn't use the value",
+  email: process.env.EMAIL || "npm requires email to be set but doesn't use the value",
+  always_auth: false,
+  url_template: "//pkgs.dev.azure.com/$organisation/_packaging/$username/npm/",
   organisations: DEFAULT_ORGANISATIONS
 };
 const ENV = Object.assign({}, DEFAULTS, argv, config);
