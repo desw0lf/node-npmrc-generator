@@ -61,10 +61,10 @@ Each of `email`, `always_auth`, `url_template`, and `password` can be set at mul
 ```
 
 ## Usage (unix)
-`node-npmrc-generator --organisations=\[{\"organisation\":\"organisation-name\"\,\"token_list\":\[{\"username\":\"username2\"\,\"password\":\"password2\"\,\"name\":\"@packagename2\"}\]}\]`
+`npx --yes node-npmrc-generator@latest --organisations=\[{\"organisation\":\"organisation-name\"\,\"token_list\":\[{\"username\":\"username2\"\,\"password\":\"password2\"\,\"name\":\"@packagename2\"}\]}\]`
 
-## Usage as preinstall script (unix)
-`npm install node-npmrc-generator@latest -g --prefix ./vendor/node_modules && node ./vendor/node_modules/lib/node_modules/node-npmrc-generator/index.js`
+## Usage as preinstall script
+`npx --yes node-npmrc-generator@latest`
 
 Best to use `./npmrc-config.json` file.
 
