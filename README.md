@@ -5,6 +5,10 @@ Install with [npm](https://www.npmjs.com/):
 ```sh
 npm install node-npmrc-generator --save-dev
 ```
+or preinstall script
+```sh
+npx --yes node-npmrc-generator@latest
+```
 
 ## Required params
 
@@ -60,7 +64,7 @@ Each of `email`, `always_auth`, `url_template`, and `password` can be set at mul
 }
 ```
 
-## Usage (unix)
+## Usage
 `npx --yes node-npmrc-generator@latest --organisations=\[{\"organisation\":\"organisation-name\"\,\"token_list\":\[{\"username\":\"username2\"\,\"password\":\"password2\"\,\"name\":\"@packagename2\"}\]}\]`
 
 ## Usage as preinstall script
