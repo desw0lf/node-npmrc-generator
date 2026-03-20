@@ -1,0 +1,14 @@
+{
+  "organisations": [
+    {
+      "organisation": "tsys",
+      "token_list": [
+        {
+          "username": "username2",
+          "password": "password2",
+          "name": "@packagename2"
+        }
+      ]
+    }
+  ]
+}

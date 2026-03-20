@@ -1,45 +1,52 @@
 #!/usr/bin/env node
 const fs = require("fs");
-const path = require("path");
+// const path = require("path");
+const ENV = require("./vars.js");
 
-
-let { ORGANISATION, TOKEN_LIST } = process.env;
-const { NPMRC_NAME, OUTPUT_PATH } = process.env;
-const { npm_package_npmrcConfig_npmrcName, npm_package_npmrcConfig_organisation, npm_package_npmrcConfig_tokenList, npm_package_npmrcConfig_outputPath } = process.env;
-
-if (!ORGANISATION) {
-  ORGANISATION = npm_package_npmrcConfig_organisation;
-}
-if (!TOKEN_LIST) {
-  TOKEN_LIST = npm_package_npmrcConfig_tokenList;
+function ECHO(...str) {
+  if (ENV.hide_logs) {
+    return;
+  }
+  console.log(...str);
 }
 
-const outputFile = NPMRC_NAME || npm_package_npmrcConfig_npmrcName || ".npmrc";
-const outputPath = OUTPUT_PATH || npm_package_npmrcConfig_outputPath || "./"; 
-const distFolder = path.resolve(process.cwd() + "/", outputPath);
-const EMAIL = "npm requires email to be set but doesn't use the value"; // maybe will be required in future
+// let { ORGANISATION, TOKEN_LIST } = process.env;
+// const { NPMRC_NAME, OUTPUT_PATH } = process.env;
+// const { npm_package_npmrcConfig_npmrcName, npm_package_npmrcConfig_organisation, npm_package_npmrcConfig_tokenList, npm_package_npmrcConfig_outputPath } = process.env;
+
+// if (!ORGANISATION) {
+//   ORGANISATION = npm_package_npmrcConfig_organisation;
+// }
+// if (!TOKEN_LIST) {
+//   TOKEN_LIST = npm_package_npmrcConfig_tokenList;
+// }
+
+// const outputFile = NPMRC_NAME || npm_package_npmrcConfig_npmrcName || ".npmrc";
+// const outputPath = OUTPUT_PATH || npm_package_npmrcConfig_outputPath || "./"; 
+// const distFolder = path.resolve(process.cwd() + "/", outputPath);
+// const EMAIL = "npm requires email to be set but doesn't use the value"; // maybe will be required in future
 
 function writeFile(content, path, name) {
   fs.writeFile(path + "/" + name, content, function(err) {
     if (err) {
       throw err;
     } else {
-      console.log(name + " was saved!");
+      console.log("=== " + name + " WAS SAVED! ===");
     }
   });
 }
 
-function generateTokenString(url, name, username, password) {
+function generateTokenString(url, name, username, password, email) {
   return `${name ? name + ":" : ""}registry=https:${url}registry/
 always-auth=true
 ; Treat this auth token like a password. Do not share it with anyone, including Microsoft support.
 ; begin auth token
 ${url}registry/:username=${username}
 ${url}registry/:_password=${password}
-${url}registry/:email=${EMAIL}
+${url}registry/:email=${email}
 ${url}:username=${username}
 ${url}:_password=${password}
-${url}:email=${EMAIL}
+${url}:email=${email}
 ; end auth token
 
 `;
@@ -51,22 +58,27 @@ function generateURL(organisation, username) {
 }
 
 function generateCredentials() {
-  const tokens = TOKEN_LIST.split(",");
+  const orgs = ENV.organisations;
   let list = [];
-  for (let i = 0; i < tokens.length; i += 1) {
+  for (let i = 0; i < orgs.length; i += 1) {
     try {
-      const credentials = tokens[i].split(/:|@/);
-      if (credentials.length !== 3) {
-        throw new Error("Wrong format");
+      const org = orgs[i];
+      if (typeof org.organisation !== "string") {
+        throw new Error("'organisation' field not present");
       }
-      const username = credentials[0];
-      const password = credentials[1];
-      const name = "@" + credentials[2];
-      list.push({
-        username: username,
-        password: password,
-        name: name
-      })
+      if (!Array.isArray(org.token_list)) {
+        throw new Error("'token_list' field not present or array");
+      }
+      const l = org.token_list;
+      for (let j = 0; j < l.length; j += 1) {
+        const a = l[j];
+        list.push({
+          username: a.username,
+          password: a.password,
+          name: a.name,
+          organisation: org.organisation
+        });
+      }
     } catch (e) {
       throw new Error("Wrong format");
     }
@@ -74,17 +86,22 @@ function generateCredentials() {
   return list;
 }
 
-function init() {
-  if (!ORGANISATION || !TOKEN_LIST) {
-    throw new Error("You must provide the following required ENV variables: [ORGANISATION, TOKEN_LIST]");
+function isConfigValid() {
+  if (!ENV.organisations || !Array.isArray(ENV.organisations) || ENV.organisations.length === 0) {
+    throw new Error("You must provide the following required options: organisations");
   }
+}
+
+function init() {
+  isConfigValid();
   const credentials = generateCredentials();
+  ECHO(ENV.npmrc_name + " list:", credentials);
   let content = "";
   for (let i = 0; i < credentials.length; i += 1) {
     const c = credentials[i];
-    content += generateTokenString(generateURL(ORGANISATION, c.username), c.name, c.username, c.password);
+    content += generateTokenString(generateURL(c.organisation, c.username), c.name, c.username, c.password, ENV.email);
   }
-  writeFile(content, distFolder, outputFile);
+  writeFile(content, ENV.dist_folder, ENV.npmrc_name);
 }
 
 init();
