@@ -16,7 +16,7 @@ function writeFile(content, path, name) {
 
 function generateTokenString(url, name, username, password, email, alwaysAuth) {
   return `${name ? name + ":" : ""}registry=https:${url}registry/
-${alwaysAuth ? "always-auth=true\n" : ""}; Treat this auth token like a password. Do not share it with anyone, including Microsoft support.
+${alwaysAuth ? "always-auth=true\n" : ""}; Treat this auth token like a password. Do not share it with anyone.
 ; begin auth token
 ${url}registry/:username=${username}
 ${url}registry/:_password=${password}
