@@ -1,38 +1,16 @@
 #!/usr/bin/env node
 const fs = require("fs");
-// const path = require("path");
 const ENV = require("./vars.js");
 
 function ECHO(...str) {
-  if (ENV.hide_logs) {
-    return;
-  }
+  if (ENV.hide_logs) return;
   console.log(...str);
 }
 
-// let { ORGANISATION, TOKEN_LIST } = process.env;
-// const { NPMRC_NAME, OUTPUT_PATH } = process.env;
-// const { npm_package_npmrcConfig_npmrcName, npm_package_npmrcConfig_organisation, npm_package_npmrcConfig_tokenList, npm_package_npmrcConfig_outputPath } = process.env;
-
-// if (!ORGANISATION) {
-//   ORGANISATION = npm_package_npmrcConfig_organisation;
-// }
-// if (!TOKEN_LIST) {
-//   TOKEN_LIST = npm_package_npmrcConfig_tokenList;
-// }
-
-// const outputFile = NPMRC_NAME || npm_package_npmrcConfig_npmrcName || ".npmrc";
-// const outputPath = OUTPUT_PATH || npm_package_npmrcConfig_outputPath || "./"; 
-// const distFolder = path.resolve(process.cwd() + "/", outputPath);
-// const EMAIL = "npm requires email to be set but doesn't use the value"; // maybe will be required in future
-
 function writeFile(content, path, name) {
   fs.writeFile(path + "/" + name, content, function(err) {
-    if (err) {
-      throw err;
-    } else {
-      console.log("=== " + name + " WAS SAVED! ===");
-    }
+    if (err) throw err;
+    console.log("=== " + name + " WAS SAVED! ===");
   });
 }
 
@@ -52,9 +30,7 @@ ${url}:email=${email}
 }
 
 function generateURL(organisation, username, url_template) {
-  return url_template
-    .replace(/\$organisation/g, organisation)
-    .replace(/\$username/g, username);
+  return url_template.replace(/\$organisation/g, organisation).replace(/\$username/g, username);
 }
 
 function generateCredentials() {
@@ -74,16 +50,16 @@ function generateCredentials() {
         const a = l[j];
         list.push({
           username: a.username,
-          password: a.password !== undefined ? a.password : org.password,
+          password: a.password ?? org.password,
           name: a.name,
           organisation: org.organisation,
-          email: a.email !== undefined ? a.email : org.email,
-          always_auth: a.always_auth !== undefined ? a.always_auth : org.always_auth,
-          url_template: a.url_template !== undefined ? a.url_template : org.url_template
+          email: a.email ?? org.email ?? ENV.email,
+          always_auth: a.always_auth ?? org.always_auth ?? ENV.always_auth,
+          url_template: a.url_template ?? org.url_template ?? ENV.url_template
         });
       }
     } catch (e) {
-      throw new Error("Wrong format");
+      throw new Error(`Wrong format: ${e.message}`);
     }
   }
   return list;
@@ -102,10 +78,7 @@ function init() {
   let content = "";
   for (let i = 0; i < credentials.length; i += 1) {
     const c = credentials[i];
-    const email = c.email !== undefined ? c.email : ENV.email;
-    const always_auth = c.always_auth !== undefined ? c.always_auth : ENV.always_auth;
-    const url_template = c.url_template !== undefined ? c.url_template : ENV.url_template;
-    content += generateTokenString(generateURL(c.organisation, c.username, url_template), c.name, c.username, c.password, email, always_auth);
+    content += generateTokenString(generateURL(c.organisation, c.username, c.url_template), c.name, c.username, c.password, c.email, c.always_auth);
   }
   writeFile(content, ENV.dist_folder, ENV.npmrc_name);
 }

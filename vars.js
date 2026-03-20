@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const fs = require("fs");
 const path = require("path");
-const argv = require("minimist")(process.argv.slice(2), {boolean: ["hide_logs"]});
+const argv = require("minimist")(process.argv.slice(2), {boolean: ["hide_logs", "always_auth"]});
 // console.log(argv);
 const DEFAULT_CONFIG_FOLDER_PATH = "./npmrc-config.json";
 const DEFAULT_OUTPUT_FOLDER_PATH = "./";
