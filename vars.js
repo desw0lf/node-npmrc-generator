@@ -42,6 +42,6 @@ const DEFAULTS = {
   url_template: "//pkgs.dev.azure.com/$organisation/_packaging/$username/npm/",
   organisations: DEFAULT_ORGANISATIONS
 };
-const ENV = Object.assign({}, DEFAULTS, argv, config);
+const ENV = Object.assign({}, DEFAULTS, config, argv);
 
 module.exports = ENV; 
