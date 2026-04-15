@@ -39,9 +39,6 @@ function generateCredentials() {
   for (let i = 0; i < orgs.length; i += 1) {
     try {
       const org = orgs[i];
-      if (typeof org.organisation !== "string") {
-        throw new Error("'organisation' field not present");
-      }
       if (!Array.isArray(org.token_list)) {
         throw new Error("'token_list' field not present or array");
       }
