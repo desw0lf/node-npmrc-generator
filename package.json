@@ -1,14 +1,14 @@
 {
   "name": "node-npmrc-generator",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "Generate .npmrc",
-  "main": "index.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/desw0lf/node-npmrc-generator.git"
   },
   "bin": {
-    "node-npmrc-generator": "./index.js"
+    "node-npmrc-generator": "./dist/index.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,6 +16,6 @@
   "author": "Artur",
   "license": "MIT",
   "dependencies": {
-    "minimist": "^1.2.6"
+    "minimist": "1.2.8"
   }
 }
