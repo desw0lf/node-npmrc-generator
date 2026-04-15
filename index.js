@@ -49,9 +49,9 @@ function generateCredentials() {
       for (let j = 0; j < l.length; j += 1) {
         const a = l[j];
         list.push({
-          username: a.username,
-          password: a.password ?? org.password,
-          name: a.name,
+          username: a.username ?? org.username ?? ENV.username,
+          password: a.password ?? org.password ?? ENV.password,
+          name: a.name ?? org.name ?? ENV.name,
           organisation: org.organisation,
           email: a.email ?? org.email ?? ENV.email,
           always_auth: a.always_auth ?? org.always_auth ?? ENV.always_auth,
@@ -74,10 +74,11 @@ function isConfigValid() {
 function init() {
   isConfigValid();
   const credentials = generateCredentials();
-  ECHO(ENV.npmrc_name + " list:", credentials);
+  ECHO(ENV.npmrc_name + " list:");
   let content = "";
   for (let i = 0; i < credentials.length; i += 1) {
     const c = credentials[i];
+    ECHO({ ...c, password: "********" });
     content += generateTokenString(generateURL(c.organisation, c.username, c.url_template), c.name, c.username, c.password, c.email, c.always_auth);
   }
   writeFile(content, ENV.dist_folder, ENV.npmrc_name);
