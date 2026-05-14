@@ -18,9 +18,17 @@ function generateSettingsString(settings) {
   if (!settings || typeof settings !== "object" || Object.keys(settings).length === 0) {
     return "";
   }
-  return Object.entries(settings)
-    .map(([key, value]) => `${key}=${value}`)
-    .join("\n") + "\n\n";
+  const lines = [];
+  for (const [key, value] of Object.entries(settings)) {
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        lines.push(`${key}[]=${item}`);
+      }
+    } else {
+      lines.push(`${key}=${value}`);
+    }
+  }
+  return lines.join("\n") + "\n\n";
 }
 
 function generateTokenString(url, name, username, password, email, alwaysAuth) {
