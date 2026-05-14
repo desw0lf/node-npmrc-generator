@@ -26,6 +26,7 @@ npx --yes node-npmrc-generator@latest
 | `--email` | `process.env.EMAIL` | Email written into the .npmrc auth block |
 | `--always_auth` | `false` | Emit `always-auth=true` in the .npmrc |
 | `--url_template` | `//pkgs.dev.azure.com/$organisation/_packaging/$username/npm/` | Registry URL template. Use `$organisation` and `$username` as placeholders |
+| `--settings` | `{}` | Key-value pairs written as prefix lines in the .npmrc (e.g. `{"engine-strict":true}`) |
 
 ## Precedence
 
@@ -41,6 +42,10 @@ Each of `email`, `always_auth`, `url_template`, and `password` can be set at mul
   "email": "team@example.com",
   "always_auth": false,
   "url_template": "//pkgs.dev.azure.com/$organisation/_packaging/$username/npm/",
+  "settings": {
+    "engine-strict": true,
+    "min-release-age": 7
+  },
   "organisations": [
     {
       "organisation": "my-org",
@@ -65,7 +70,10 @@ Each of `email`, `always_auth`, `url_template`, and `password` can be set at mul
 ```
 
 ## Usage
-`npx --yes node-npmrc-generator@latest --organisations=\[{\"organisation\":\"organisation-name\"\,\"token_list\":\[{\"username\":\"username2\"\,\"password\":\"password2\"\,\"name\":\"@packagename2\"}\]}\]`
+`npx --yes node-npmrc-generator@latest --organisations=\[{"organisation":"organisation-name"\,"token_list":\[{"username":"username2"\,"password":"password2"\,"name":"@packagename2"}\]\]}`
+
+With settings via CLI:
+`npx --yes node-npmrc-generator@latest --settings={"engine-strict":true,"min-release-age":7}`
 
 ## Usage as preinstall script
 `npx --yes node-npmrc-generator@latest`
@@ -73,6 +81,7 @@ Each of `email`, `always_auth`, `url_template`, and `password` can be set at mul
 Best to use `./npmrc-config.json` file.
 
 ## Change log
+- 3.1.0 - Add `settings` for prefix key-value lines in .npmrc, available via config file and CLI (`--settings`)
 - 3.0.0 - Add `email`, `always_auth`, `url_template` and org-level `password`; all settable globally, per-org, or per token item
 - 2.0.1 - Remove `npmrcConfig`, add POSIX params and `npmrc-config.json` file for config
 - 1.0.4 - Ability to add ENV variables as `npmrcConfig` in package.json

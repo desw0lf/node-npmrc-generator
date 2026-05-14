@@ -14,6 +14,15 @@ function writeFile(content, path, name) {
   });
 }
 
+function generateSettingsString(settings) {
+  if (!settings || typeof settings !== "object" || Object.keys(settings).length === 0) {
+    return "";
+  }
+  return Object.entries(settings)
+    .map(([key, value]) => `${key}=${value}`)
+    .join("\n") + "\n\n";
+}
+
 function generateTokenString(url, name, username, password, email, alwaysAuth) {
   return `${name ? name + ":" : ""}registry=https:${url}registry/
 ${alwaysAuth ? "always-auth=true\n" : ""}; Treat this auth token like a password. Do not share it with anyone.
@@ -72,7 +81,7 @@ function init() {
   isConfigValid();
   const credentials = generateCredentials();
   ECHO(ENV.npmrc_name + " list:");
-  let content = "";
+  let content = generateSettingsString(ENV.settings);
   for (let i = 0; i < credentials.length; i += 1) {
     const c = credentials[i];
     ECHO({ ...c, password: "********" });
