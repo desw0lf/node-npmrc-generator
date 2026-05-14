@@ -22,7 +22,7 @@ function generateSettingsString(settings) {
   for (const [key, value] of Object.entries(settings)) {
     if (Array.isArray(value)) {
       for (const item of value) {
-        lines.push(`${key}[]=${item}`);
+        lines.push(`${key}=${item}`);
       }
     } else {
       lines.push(`${key}=${value}`);

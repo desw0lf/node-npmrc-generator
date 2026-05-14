@@ -26,7 +26,7 @@ npx --yes node-npmrc-generator@latest
 | `--email` | `process.env.EMAIL` | Email written into the .npmrc auth block |
 | `--always_auth` | `false` | Emit `always-auth=true` in the .npmrc |
 | `--url_template` | `//pkgs.dev.azure.com/$organisation/_packaging/$username/npm/` | Registry URL template. Use `$organisation` and `$username` as placeholders |
-| `--settings` | `{}` | Key-value pairs written as prefix lines in the .npmrc. Arrays are expanded to `key[]=value` lines. (e.g. `{"engine-strict":true,"exclude":["a","b"]}`) |
+| `--settings` | `{}` | Key-value pairs written as prefix lines in the .npmrc. Arrays are expanded to one line per item using the same key. (e.g. `{"engine-strict":true,"exclude":["a","b"]}`) |
 
 ## Precedence
 
